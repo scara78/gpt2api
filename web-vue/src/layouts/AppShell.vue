@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="min-h-screen">
     <div class="flex min-h-screen flex-col lg:flex-row">
       <div

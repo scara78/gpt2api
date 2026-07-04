@@ -1,10 +1,10 @@
 <template>
   <div class="register-page">
     <PagePanel class="space-y-4">
-      <PanelHeader title="注册账号" align="start">
+      <PanelHeader title="Înregistrare cont" align="start">
         <template #actions>
           <StateBadge :tone="registerConfig?.enabled ? 'success' : 'muted'" shape="rounded" size="sm">
-            {{ registerConfig?.enabled ? '运行中' : '已停止' }}
+            {{ registerConfig?.enabled ? 'Activ' : 'Oprit' }}
           </StateBadge>
           <Button
             size="sm"
@@ -12,23 +12,23 @@
             :disabled="legacySaving || !registerConfig || registerConfig.enabled"
             @click="saveLegacyConfig"
           >
-            保存配置
+            Salvează configurația
           </Button>
         </template>
       </PanelHeader>
 
       <PageLoadingState
         v-if="legacyLoading && !registerConfig"
-        title="正在加载注册配置"
-        description="读取邮箱来源、任务参数和运行状态。"
+        title="Se încarcă configurația de înregistrare"
+        description="Se citesc sursele de email, parametrii sarcinii și starea de execuție."
       />
 
       <div v-else-if="registerConfig" class="register-layout">
         <div class="register-config-column">
-          <FormSection title="任务参数" density="roomy">
+          <FormSection title="Parametri sarcină" density="roomy">
             <div class="register-form-grid">
               <label class="register-field">
-                <span class="register-label">任务模式</span>
+                <span class="register-label">Mod sarcină</span>
                 <GroupedSelectMenu
                   v-model="registerConfig.mode"
                   :groups="registerModeGroups"
@@ -39,7 +39,7 @@
               </label>
 
               <label v-if="registerConfig.mode === 'total'" class="register-field">
-                <span class="register-label">注册总数</span>
+                <span class="register-label">Total înregistrări</span>
                 <Input
                   v-model.number="registerConfig.total"
                   type="number"
@@ -50,7 +50,7 @@
               </label>
 
               <label v-else-if="registerConfig.mode === 'quota'" class="register-field">
-                <span class="register-label">目标剩余额度</span>
+                <span class="register-label">Cotă rămasă țintă</span>
                 <Input
                   v-model.number="registerConfig.target_quota"
                   type="number"
@@ -61,7 +61,7 @@
               </label>
 
               <label v-else class="register-field">
-                <span class="register-label">目标可用账号</span>
+                <span class="register-label">Conturi disponibile țintă</span>
                 <Input
                   v-model.number="registerConfig.target_available"
                   type="number"
@@ -72,7 +72,7 @@
               </label>
 
               <label class="register-field">
-                <span class="register-label">线程数</span>
+                <span class="register-label">Număr fire</span>
                 <Input
                   v-model.number="registerConfig.threads"
                   type="number"
@@ -83,7 +83,7 @@
               </label>
 
               <label v-if="registerConfig.mode !== 'total'" class="register-field">
-                <span class="register-label">检查间隔（秒）</span>
+                <span class="register-label">Interval verificare (sec)</span>
                 <Input
                   v-model.number="registerConfig.check_interval"
                   type="number"
@@ -94,7 +94,7 @@
               </label>
 
               <label class="register-field">
-                <span class="register-label">注册代理</span>
+                <span class="register-label">Proxy înregistrare</span>
                 <GroupedSelectMenu
                   :model-value="registerProxyMode"
                   :groups="registerProxyModeGroups"
@@ -106,7 +106,7 @@
               </label>
 
               <label v-if="registerProxyMode === 'group'" class="register-field">
-                <span class="register-label">代理组</span>
+                <span class="register-label">Grup proxy</span>
                 <GroupedSelectMenu
                   :model-value="selectedRegisterProxyGroupId"
                   :groups="registerProxyGroupGroups"
@@ -118,7 +118,7 @@
               </label>
 
               <label v-else-if="registerProxyMode === 'custom'" class="register-field">
-                <span class="register-label">自定义代理</span>
+                <span class="register-label">Proxy personalizat</span>
                 <Input
                   :model-value="customRegisterProxyInput"
                   block
@@ -135,10 +135,10 @@
             </div>
           </FormSection>
 
-          <FormSection title="邮箱请求" density="roomy">
+          <FormSection title="Cereri email" density="roomy">
             <div class="register-form-grid register-form-grid--mail">
               <label class="register-field">
-                <span class="register-label">请求超时（秒）</span>
+                <span class="register-label">Timeout cerere (sec)</span>
                 <Input
                   v-model.number="registerConfig.mail.request_timeout"
                   type="number"
@@ -149,7 +149,7 @@
               </label>
 
               <label class="register-field">
-                <span class="register-label">验证码等待（秒）</span>
+                <span class="register-label">Așteptare cod verificare (sec)</span>
                 <Input
                   v-model.number="registerConfig.mail.wait_timeout"
                   type="number"
@@ -160,7 +160,7 @@
               </label>
 
               <label class="register-field">
-                <span class="register-label">轮询间隔（秒）</span>
+                <span class="register-label">Interval polling (sec)</span>
                 <Input
                   v-model.number="registerConfig.mail.wait_interval"
                   type="number"
@@ -172,31 +172,31 @@
               </label>
 
               <label class="register-field register-field--full">
-                <span class="register-label">请求 User-Agent</span>
+                <span class="register-label">User-Agent cerere</span>
                 <Input
                   v-model.trim="registerConfig.mail.user_agent"
                   block
                   root-class="font-mono"
-                  placeholder="默认浏览器 UA"
+                  placeholder="UA browser implicit"
                   :disabled="registerConfig.enabled"
                 />
               </label>
             </div>
           </FormSection>
 
-          <FormSection title="邮箱来源" density="roomy">
+          <FormSection title="Surse email" density="roomy">
             <template #actions>
               <MetaChip v-if="enabledProviderIssueCount" size="xs" tone="danger">
-                缺 {{ enabledProviderIssueCount }}
+                Lipsă {{ enabledProviderIssueCount }}
               </MetaChip>
-              <MetaChip size="xs" tone="muted">已启用 {{ enabledProviderCount }} / {{ registerProviders.length }}</MetaChip>
+              <MetaChip size="xs" tone="muted">Activate {{ enabledProviderCount }} / {{ registerProviders.length }}</MetaChip>
               <Button
                 size="sm"
                 variant="outline"
                 :disabled="registerConfig.enabled"
                 @click="addProvider"
               >
-                添加来源
+                Adaugă sursă
               </Button>
             </template>
 
@@ -213,16 +213,16 @@
                     <div class="register-provider-title">
                       <span>{{ providerTitle(provider, index) }}</span>
                       <MetaChip size="xs" tone="muted">{{ providerTypeLabel(providerType(provider)) }}</MetaChip>
-                      <MetaChip v-if="provider.enable === false" size="xs" tone="warning">未启用</MetaChip>
+                      <MetaChip v-if="provider.enable === false" size="xs" tone="warning">Dezactivat</MetaChip>
                       <MetaChip v-else-if="providerRequirementMessages(provider).length" size="xs" tone="danger">
-                        缺 {{ providerRequirementMessages(provider).length }} 项
+                        Lipsă {{ providerRequirementMessages(provider).length }} elem.
                       </MetaChip>
-                      <MetaChip v-else size="xs" tone="success">可启动</MetaChip>
+                      <MetaChip v-else size="xs" tone="success">Poate porni</MetaChip>
                     </div>
                   </div>
                   <div class="register-provider-actions">
                     <Checkbox v-model="provider.enable" :disabled="registerConfig.enabled">
-                      启用
+                      Activează
                     </Checkbox>
                     <Button
                       size="sm"
@@ -230,7 +230,7 @@
                       :disabled="registerConfig.enabled || registerProviders.length <= 1"
                       @click="deleteProvider(index)"
                     >
-                      删除
+                      Șterge
                     </Button>
                   </div>
                 </div>
@@ -241,14 +241,14 @@
                   tone="danger"
                   density="compact"
                 >
-                  缺少：{{ providerRequirementMessages(provider).join('、') }}
+                  Lipsesc: {{ providerRequirementMessages(provider).join(', ') }}
                 </SurfaceBox>
 
                 <div class="register-provider-section">
-                  <div class="register-provider-section-title">基础配置</div>
+                  <div class="register-provider-section-title">Configurație de bază</div>
                   <div class="register-form-grid register-form-grid--two">
                     <label class="register-field">
-                      <span class="register-label">类型</span>
+                      <span class="register-label">Tip</span>
                       <GroupedSelectMenu
                         :model-value="provider.type || 'cloudmail_gen'"
                         :groups="providerTypeGroups"
@@ -260,7 +260,7 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'gptmail'" class="register-field">
-                      <span class="register-label">Key 来源</span>
+                      <span class="register-label">Sursă Key</span>
                       <GroupedSelectMenu
                         v-model="provider.key_mode"
                         :groups="gptMailKeyModeGroups"
@@ -282,7 +282,7 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'cloudmail_gen'" class="register-field">
-                      <span class="register-label">管理员邮箱</span>
+                      <span class="register-label">Email administrator</span>
                       <Input v-model.trim="provider.admin_email" block :disabled="registerConfig.enabled" />
                     </label>
 
@@ -307,7 +307,7 @@
                     </label>
 
                     <label v-if="providerUsesDefaultDomain(provider)" class="register-field">
-                      <span class="register-label">默认域名</span>
+                      <span class="register-label">Domeniu implicit</span>
                       <Input
                         v-model.trim="provider.default_domain"
                         block
@@ -317,24 +317,24 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'cloudmail_gen'" class="register-field">
-                      <span class="register-label">邮箱前缀</span>
+                      <span class="register-label">Prefix email</span>
                       <Input
                         v-model.trim="provider.email_prefix"
                         block
                         :disabled="registerConfig.enabled"
-                        placeholder="可选"
+                        placeholder="Opțional"
                       />
                     </label>
 
                     <label v-if="providerType(provider) === 'moemail'" class="register-field">
-                      <span class="register-label">过期时间</span>
+                      <span class="register-label">Timp expirare</span>
                       <Input
                         v-model.number="provider.expiry_time"
                         type="number"
                         min="0"
                         block
                         :disabled="registerConfig.enabled"
-                        placeholder="0 表示服务默认"
+                        placeholder="0 = implicit serviciu"
                       />
                     </label>
 
@@ -356,7 +356,7 @@
                         block
                         root-class="font-mono"
                         :disabled="registerConfig.enabled"
-                        placeholder="固定收件箱 JWT"
+                        placeholder="JWT inbox fix"
                       />
                     </label>
 
@@ -367,12 +367,12 @@
                         block
                         root-class="font-mono"
                         :disabled="registerConfig.enabled"
-                        placeholder="可选"
+                        placeholder="Opțional"
                       />
                     </label>
 
                     <label v-if="providerType(provider) === 'ddg_mail'" class="register-field">
-                      <span class="register-label">CF 鉴权方式</span>
+                      <span class="register-label">Metodă autentificare CF</span>
                       <GroupedSelectMenu
                         v-model="provider.cf_auth_mode"
                         :groups="cfAuthModeGroups"
@@ -383,7 +383,7 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'ddg_mail'" class="register-field">
-                      <span class="register-label">创建路径</span>
+                      <span class="register-label">Cale creare</span>
                       <Input
                         v-model.trim="provider.cf_create_path"
                         block
@@ -394,7 +394,7 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'ddg_mail'" class="register-field">
-                      <span class="register-label">邮件列表路径</span>
+                      <span class="register-label">Cale listă emailuri</span>
                       <Input
                         v-model.trim="provider.cf_messages_path"
                         block
@@ -405,7 +405,7 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'yyds_mail'" class="register-field">
-                      <span class="register-label">Subdomain</span>
+                      <span class="register-label">Subdomeniu</span>
                       <Input
                         :model-value="stringValue(provider.subdomain)"
                         block
@@ -416,7 +416,7 @@
 
                     <label v-if="providerType(provider) === 'inbucket'" class="register-checkbox-field">
                       <Checkbox v-model="provider.random_subdomain" :disabled="registerConfig.enabled">
-                        随机子域名
+                        Subdomeniu aleatoriu
                       </Checkbox>
                     </label>
 
@@ -428,14 +428,14 @@
 
                     <label v-if="providerType(provider) === 'gptmail'" class="register-checkbox-field register-checkbox-field--compact register-field--full">
                       <Checkbox v-model="provider.local_compose" :disabled="registerConfig.enabled">
-                        已知域名本地拼接
+                        Concatenare locală domenii cunoscute
                       </Checkbox>
                     </label>
                   </div>
                 </div>
 
                 <div v-if="providerType(provider) === 'gptmail'" class="register-provider-section register-provider-section--soft">
-                  <div class="register-provider-section-title">GPTMail 额度</div>
+                  <div class="register-provider-section-title">Cotă GPTMail</div>
                   <div class="register-gptmail-panel">
                     <div class="register-gptmail-summary">
                       <MetaChip size="xs" :tone="gptMailStatusTone(index)">
@@ -446,7 +446,7 @@
                         {{ gptMailStatusByIndex(index)?.key_hint }}
                       </MetaChip>
                       <MetaChip v-if="gptMailRemainingText(index)" size="xs" tone="info">
-                        剩余 {{ gptMailRemainingText(index) }}
+                        Rămas {{ gptMailRemainingText(index) }}
                       </MetaChip>
                       <MetaChip v-if="gptMailResetText(index)" size="xs" tone="muted">
                         {{ gptMailResetText(index) }}
@@ -459,7 +459,7 @@
                         :disabled="registerConfig.enabled || gptMailStatusBusy(index)"
                         @click="checkGptMailStatus(index, provider)"
                       >
-                        {{ gptMailStatusBusy(index) ? '检测中' : '检测额度' }}
+                        {{ gptMailStatusBusy(index) ? 'Se verifică' : 'Verifică cota' }}
                       </Button>
                     </div>
                     <p class="register-preview-line">{{ gptMailStatusHint(index, provider) }}</p>
@@ -470,7 +470,7 @@
                   v-if="providerUsesDomainList(provider) || providerType(provider) === 'cloudmail_gen'"
                   class="register-provider-section"
                 >
-                  <div class="register-provider-section-title">域名配置</div>
+                  <div class="register-provider-section-title">Configurație domeniu</div>
                   <div class="register-provider-stack">
                     <label v-if="providerUsesDomainList(provider)" class="register-field">
                       <span class="register-label">{{ domainLabel(provider) }}</span>
@@ -484,11 +484,11 @@
                     </label>
 
                     <label v-if="providerType(provider) === 'cloudmail_gen'" class="register-field">
-                      <span class="register-label">子域名前缀</span>
+                      <span class="register-label">Prefix subdomeniu</span>
                       <textarea
                         class="register-textarea"
                         :disabled="registerConfig.enabled"
-                        placeholder="每行一个子域名前缀，留空则直接使用主域名"
+                        placeholder="Câte un prefix subdomeniu pe linie, gol = domeniu principal"
                         :value="arrayText(provider.subdomain)"
                         @input="updateProviderArray(index, 'subdomain', $event)"
                       ></textarea>
@@ -497,11 +497,11 @@
                 </div>
 
                 <div v-if="providerType(provider) === 'outlook_token'" class="register-provider-section register-provider-section--soft">
-                  <div class="register-provider-section-title">Outlook 邮箱池</div>
+                  <div class="register-provider-section-title">Pool emailuri Outlook</div>
 
                   <div class="register-form-grid register-form-grid--three">
                     <label class="register-field">
-                      <span class="register-label">读取方式</span>
+                      <span class="register-label">Metodă citire</span>
                       <GroupedSelectMenu
                         v-model="provider.mode"
                         :groups="outlookModeGroups"
@@ -523,7 +523,7 @@
                     </label>
 
                     <label class="register-field">
-                      <span class="register-label">读取邮件数</span>
+                      <span class="register-label">Număr emailuri citite</span>
                       <Input
                         v-model.number="provider.message_limit"
                         type="number"
@@ -535,16 +535,16 @@
                   </div>
 
                   <div class="register-provider-section register-provider-section--soft">
-                    <div class="register-provider-section-title">加号别名</div>
+                    <div class="register-provider-section-title">Alias plus</div>
                     <div class="register-form-grid register-form-grid--three">
                       <label class="register-checkbox-field register-checkbox-field--compact register-field--full">
                         <Checkbox v-model="provider.alias_enabled" :disabled="registerConfig.enabled">
-                          启用 Outlook / Hotmail 加号别名
+                          Activează alias plus Outlook / Hotmail
                         </Checkbox>
                       </label>
 
                       <label class="register-field">
-                        <span class="register-label">每个邮箱别名数</span>
+                        <span class="register-label">Aliasuri per email</span>
                         <Input
                           v-model.number="provider.alias_per_email"
                           type="number"
@@ -556,7 +556,7 @@
                       </label>
 
                       <label class="register-field">
-                        <span class="register-label">别名前缀</span>
+                        <span class="register-label">Prefix alias</span>
                         <Input
                           v-model.trim="provider.alias_prefix"
                           block
@@ -568,7 +568,7 @@
 
                       <label class="register-checkbox-field register-checkbox-field--compact">
                         <Checkbox v-model="provider.alias_include_original" :disabled="registerConfig.enabled || !provider.alias_enabled">
-                          包含原邮箱
+                          Include email original
                         </Checkbox>
                       </label>
                     </div>
@@ -576,30 +576,30 @@
                   </div>
 
                   <label class="register-field">
-                    <span class="register-label">邮箱池导入</span>
+                    <span class="register-label">Import pool emailuri</span>
                     <textarea
                       class="register-textarea register-textarea--tall"
                       :disabled="registerConfig.enabled"
                       :value="String(provider.mailboxes || '')"
-                      placeholder="每行一个：邮箱----密码----client_id----refresh_token"
+                      placeholder="Câte unul pe linie: email----parolă----client_id----refresh_token"
                       @input="updateProviderField(index, 'mailboxes', ($event.target as HTMLTextAreaElement).value)"
                     ></textarea>
                   </label>
 
                   <div class="register-outlook-toolbar">
                     <div class="register-outlook-summary">
-                      <MetaChip size="xs" tone="success">可用 {{ outlookPoolSummary(provider).available }}</MetaChip>
-                      <MetaChip size="xs" tone="muted">已用 {{ outlookPoolSummary(provider).used }}</MetaChip>
+                      <MetaChip size="xs" tone="success">Disponibil {{ outlookPoolSummary(provider).available }}</MetaChip>
+                      <MetaChip size="xs" tone="muted">Folosit {{ outlookPoolSummary(provider).used }}</MetaChip>
                       <MetaChip size="xs" :tone="outlookPoolSummary(provider).abnormal ? 'warning' : 'success'">
-                        异常 {{ outlookPoolSummary(provider).abnormal }}
+                        Anomalii {{ outlookPoolSummary(provider).abnormal }}
                       </MetaChip>
                       <MetaChip v-if="outlookPoolSummary(provider).pending" size="xs" tone="info">
-                        待保存 {{ outlookPoolSummary(provider).pending }}
+                        De salvat {{ outlookPoolSummary(provider).pending }}
                       </MetaChip>
                     </div>
 
                     <FloatingActionMenu
-                      label="更多维护"
+                      label="Mai multe opțiuni"
                       :items="outlookPoolActionItems"
                       :disabled="registerConfig.enabled || legacySaving"
                       align="right"
@@ -611,14 +611,14 @@
 
                   <p class="register-preview-line">{{ outlookPoolHint(provider) }}</p>
                   <details class="register-outlook-details">
-                    <summary>邮箱池详情</summary>
+                    <summary>Detalii pool emailuri</summary>
                     <div class="register-outlook-detail-chips">
-                      <MetaChip size="xs" tone="muted">已保存 {{ outlookPoolSummary(provider).saved }}</MetaChip>
-                      <MetaChip size="xs" tone="info">待保存 {{ outlookPoolSummary(provider).pending }}</MetaChip>
-                      <MetaChip size="xs" tone="muted">占用 {{ outlookPoolSummary(provider).inUse }}</MetaChip>
-                      <MetaChip size="xs" tone="warning">需登录 {{ outlookPoolSummary(provider).loginRequired }}</MetaChip>
-                      <MetaChip size="xs" tone="warning">失效 {{ outlookPoolSummary(provider).tokenInvalid }}</MetaChip>
-                      <MetaChip size="xs" tone="danger">失败 {{ outlookPoolSummary(provider).failed }}</MetaChip>
+                      <MetaChip size="xs" tone="muted">Salvat {{ outlookPoolSummary(provider).saved }}</MetaChip>
+                      <MetaChip size="xs" tone="info">De salvat {{ outlookPoolSummary(provider).pending }}</MetaChip>
+                      <MetaChip size="xs" tone="muted">Ocupat {{ outlookPoolSummary(provider).inUse }}</MetaChip>
+                      <MetaChip size="xs" tone="warning">Necesită autentificare {{ outlookPoolSummary(provider).loginRequired }}</MetaChip>
+                      <MetaChip size="xs" tone="warning">Invalid {{ outlookPoolSummary(provider).tokenInvalid }}</MetaChip>
+                      <MetaChip size="xs" tone="danger">Eșuat {{ outlookPoolSummary(provider).failed }}</MetaChip>
                     </div>
                   </details>
                 </div>
@@ -628,7 +628,7 @@
         </div>
 
         <aside class="register-runtime-column">
-          <FormSection title="执行控制" density="roomy" class="register-runtime-section">
+          <FormSection title="Control execuție" density="roomy" class="register-runtime-section">
             <MetricStrip
               :items="registerMetricItems"
               columns-class="grid-cols-2 md:grid-cols-4"
@@ -642,7 +642,7 @@
                 :disabled="registerActionDisabled"
                 @click="toggleLegacyTask"
               >
-                {{ registerConfig.enabled ? '停止' : '启动' }}
+                {{ registerConfig.enabled ? 'Oprește' : 'Pornește' }}
               </Button>
               <Button
                 block
@@ -650,7 +650,7 @@
                 :disabled="legacySaving || !registerConfig || registerConfig.enabled"
                 @click="resetLegacyStats"
               >
-                重置
+                Resetează
               </Button>
             </div>
 
@@ -659,16 +659,16 @@
             </SurfaceBox>
 
             <SurfaceBox tone="muted" density="compact" class="register-runtime-tips">
-              <p>Cloudflare 拦截：可在系统设置启用 FlareSolverr 清障，并确认相关容器已启动。</p>
-              <p>HTTP 400 等注册错误通常与邮箱域名风控有关，建议更换新的域名邮箱后重试。</p>
+              <p>Interceptare Cloudflare: activează FlareSolverr în setări și verifică containerele.</p>
+              <p>Erorile HTTP 400 la înregistrare țin de风控 domeniu email. Încearcă alt domeniu.</p>
             </SurfaceBox>
           </FormSection>
 
           <RuntimeLogPanel
             class="register-runtime-log"
-            title="实时日志"
+            title="Jurnal timp real"
             :lines="runtimeLogLines"
-            :empty-title="'暂无日志'"
+            :empty-title="'Niciun jurnal'"
             min-height="20rem"
             max-height="min(58vh, 38rem)"
           />
@@ -756,16 +756,16 @@ const defaultRegisterConfig: LegacyRegisterConfig = {
 const registerConfig = ref<LegacyRegisterConfig | null>(null)
 
 const registerModeOptions = [
-  { value: 'total', label: '按数量注册' },
-  { value: 'quota', label: '达到额度停止' },
-  { value: 'available', label: '达到账号数停止' },
+  { value: 'total', label: 'Înregistrare după număr' },
+  { value: 'quota', label: 'Oprește la cotă' },
+  { value: 'available', label: 'Oprește la număr conturi' },
 ]
 const registerModeGroups = [{ options: registerModeOptions }]
 const registerProxyModeOptions = [
-  { value: 'global', label: '使用默认代理' },
-  { value: 'direct', label: '直连' },
-  { value: 'group', label: '代理组' },
-  { value: 'custom', label: '自定义代理' },
+  { value: 'global', label: 'Folosește proxy implicit' },
+  { value: 'direct', label: 'Conexiune directă' },
+  { value: 'group', label: 'Grup proxy' },
+  { value: 'custom', label: 'Proxy personalizat' },
 ]
 const registerProxyModeGroups = [{ options: registerProxyModeOptions }]
 
@@ -778,35 +778,35 @@ const providerTypeOptions = [
   { value: 'duckmail', label: 'DuckMail' },
   { value: 'gptmail', label: 'GPTMail' },
   { value: 'yyds_mail', label: 'YYDS Mail' },
-  { value: 'ddg_mail', label: 'DDG + CF 收件箱' },
-  { value: 'outlook_token', label: 'Microsoft 邮箱凭据池' },
+  { value: 'ddg_mail', label: 'DDG + CF Inbox' },
+  { value: 'outlook_token', label: 'Pool credențiale Microsoft' },
 ]
 const providerTypeGroups = [{ options: providerTypeOptions }]
 
 const cfAuthModeOptions = [
-  { value: 'none', label: '不附加' },
+  { value: 'none', label: 'Nu atașa' },
   { value: 'bearer', label: 'Bearer' },
   { value: 'x-api-key', label: 'X-API-Key' },
   { value: 'query-key', label: 'Query key' },
 ]
 const cfAuthModeGroups = [{ options: cfAuthModeOptions }]
 const gptMailKeyModeOptions = [
-  { value: 'public', label: '公共测试 Key' },
-  { value: 'custom', label: '自定义 Key' },
+  { value: 'public', label: 'Key test public' },
+  { value: 'custom', label: 'Key personalizat' },
 ]
 const gptMailKeyModeGroups = [{ options: gptMailKeyModeOptions }]
 
 const outlookModeOptions = [
   { value: 'graph', label: 'Graph API' },
   { value: 'imap', label: 'IMAP' },
-  { value: 'auto', label: '自动兜底' },
+  { value: 'auto', label: 'Fallback automat' },
 ]
 const outlookModeGroups = [{ options: outlookModeOptions }]
 const outlookPoolActionItems: ActionMenuItem[] = [
-  { key: 'retry_failed', label: '重试异常邮箱' },
-  { key: 'failed', label: '仅释放异常状态' },
-  { key: 'unused', label: '删除未使用材料', danger: true, dividerBefore: true },
-  { key: 'all', label: '重置邮箱池状态', danger: true },
+  { key: 'retry_failed', label: 'Reîncearcă emailuri anormale' },
+  { key: 'failed', label: 'Eliberează doar stări anormale' },
+  { key: 'unused', label: 'Șterge materiale nefolosite', danger: true, dividerBefore: true },
+  { key: 'all', label: 'Resetează stare pool emailuri', danger: true },
 ]
 const providerCommonKeys = ['id', 'enable', 'type', 'label'] as const
 const providerTypeKeys: Record<string, string[]> = {
@@ -828,24 +828,24 @@ const providerLocalOnlyKeys: Record<string, string[]> = {
 const registerProviders = computed(() => registerConfig.value?.mail.providers || [])
 const registerProxyGroupOptions = computed(() => {
   const rows = proxyGroups.value.map((group) => ({
-    label: `${group.enabled === false ? '停用 · ' : ''}${group.name || group.id}${Array.isArray(group.nodes) ? ` · ${group.nodes.length} 个节点` : ''}`,
+    label: `${group.enabled === false ? 'Dezactivat · ' : ''}${group.name || group.id}${Array.isArray(group.nodes) ? ` · ${group.nodes.length} noduri` : ''}`,
     value: group.id,
   }))
   const selectedId = selectedRegisterProxyGroupId.value
   if (selectedId && !rows.some((item) => item.value === selectedId)) {
-    rows.unshift({ label: `未知代理组 · ${selectedId}`, value: selectedId })
+    rows.unshift({ label: `Grup necunoscut · ${selectedId}`, value: selectedId })
   }
   return [
-    { label: '选择代理组', value: '' },
+    { label: 'Selectează grup proxy', value: '' },
     ...rows,
   ]
 })
 const registerProxyGroupGroups = computed(() => [{ options: registerProxyGroupOptions.value }])
 const registerProxyHint = computed(() => {
-  if (registerProxyMode.value === 'direct') return '本次注册任务强制直连，不读取默认代理。'
-  if (registerProxyMode.value === 'group') return '注册任务会使用所选代理组；代理组为空时不会偷偷回退到默认代理。'
-  if (registerProxyMode.value === 'custom') return '仅本注册任务使用该代理地址。'
-  return '默认使用系统设置里的默认代理；默认代理设为直连时不使用代理。'
+  if (registerProxyMode.value === 'direct') return 'Sarcina forțează conexiune directă, ignoră proxy implicit.'
+  if (registerProxyMode.value === 'group') return 'Sarcina folosește grupul selectat; nu revine la proxy implicit.'
+  if (registerProxyMode.value === 'custom') return 'Doar această sarcină folosește adresa proxy.'
+  return 'Folosește proxy implicit din setări; fără proxy dacă e direct.'
 })
 const enabledProviderCount = computed(() => registerProviders.value.filter(provider => provider.enable !== false).length)
 const enabledProviderIssueCount = computed(() =>
@@ -861,23 +861,23 @@ const registerActionDisabled = computed(() => {
 const legacyStats = computed(() => ({ ...defaultRegisterConfig.stats, ...(registerConfig.value?.stats || {}) }))
 const legacyLogs = computed(() => [...(registerConfig.value?.logs || [])])
 const registerRuntimeHint = computed(() => {
-  if (enabledProviderCount.value === 0) return '至少启用一个邮箱来源。'
-  if (enabledProviderIssueCount.value > 0) return `还有 ${enabledProviderIssueCount.value} 项必填配置未完成。`
-  if (registerConfig.value?.enabled) return '任务运行中，配置已锁定。'
-  return '启动前会自动保存当前配置。'
+  if (enabledProviderCount.value === 0) return 'Activează cel puțin o sursă email.'
+  if (enabledProviderIssueCount.value > 0) return `Mai sunt ${enabledProviderIssueCount.value} configurări obligatorii neterminate.`
+  if (registerConfig.value?.enabled) return 'Sarcină activă, configurație blocată.'
+  return 'Configurația se salvează automat înainte de pornire.'
 })
 
 const registerMetricItems = computed(() => {
   const stats = legacyStats.value
   return [
-    { key: 'success', label: '成功', value: stats.success || 0, meta: `成功率 ${stats.success_rate || 0}%` },
-    { key: 'fail', label: '失败', value: stats.fail || 0 },
-    { key: 'done', label: '完成', value: stats.done || 0 },
-    { key: 'running', label: '运行 / 线程', value: `${stats.running || 0} / ${stats.threads || registerConfig.value?.threads || 0}` },
-    { key: 'elapsed', label: '运行时间', value: `${stats.elapsed_seconds || 0}s` },
-    { key: 'avg', label: '平均耗时', value: `${stats.avg_seconds || 0}s` },
-    { key: 'quota', label: '当前额度', value: stats.current_quota || 0 },
-    { key: 'available', label: '正常账号', value: stats.current_available || 0 },
+    { key: 'success', label: 'Succes', value: stats.success || 0, meta: `Rată succes ${stats.success_rate || 0}%` },
+    { key: 'fail', label: 'Eșec', value: stats.fail || 0 },
+    { key: 'done', label: 'Finalizat', value: stats.done || 0 },
+    { key: 'running', label: 'Activ / Fire', value: `${stats.running || 0} / ${stats.threads || registerConfig.value?.threads || 0}` },
+    { key: 'elapsed', label: 'Timp rulare', value: `${stats.elapsed_seconds || 0}s` },
+    { key: 'avg', label: 'Timp mediu', value: `${stats.avg_seconds || 0}s` },
+    { key: 'quota', label: 'Cotă curentă', value: stats.current_quota || 0 },
+    { key: 'available', label: 'Conturi normale', value: stats.current_available || 0 },
   ]
 })
 
@@ -985,7 +985,7 @@ function providerKey(provider: RegisterProvider, index: number) {
 }
 
 function providerTitle(provider: RegisterProvider, index: number) {
-  return `邮箱来源 ${index + 1}`
+  return `Sursă email ${index + 1}`
 }
 
 function providerTypeLabel(type: string) {
@@ -1066,30 +1066,30 @@ function providerRequirementMessages(provider: RegisterProvider) {
   switch (type) {
     case 'cloudmail_gen':
       requireValue(provider.api_base, 'CloudMail URL')
-      requireValue(provider.admin_email, '管理员邮箱')
+      requireValue(provider.admin_email, 'Email administrator')
       requireValue(provider.admin_password, 'Admin Password')
-      requireList(provider.domain, '邮箱域名')
+      requireList(provider.domain, 'Domeniu email')
       break
     case 'cloudflare_temp_email':
       requireValue(provider.api_base, 'API Base')
       requireValue(provider.admin_password, 'Admin Password')
-      requireList(provider.domain, '域名')
+      requireList(provider.domain, 'Domeniu')
       break
     case 'moemail':
       requireValue(provider.api_base, 'API Base')
       requireValue(provider.api_key, 'API Key')
-      requireList(provider.domain, '域名')
+      requireList(provider.domain, 'Domeniu')
       break
     case 'inbucket':
       requireValue(provider.api_base, 'API Base')
-      requireList(provider.domain, '基础域名')
+      requireList(provider.domain, 'Domeniu de bază')
       break
     case 'duckmail':
       requireValue(provider.api_key, 'API Key')
       break
     case 'gptmail':
       if (!providerUsesPublicGptMailKey(provider)) requireValue(provider.api_key, 'API Key')
-      if (provider.local_compose) requireValue(provider.default_domain, '默认域名')
+      if (provider.local_compose) requireValue(provider.default_domain, 'Domeniu implicit')
       break
     case 'yyds_mail':
       requireValue(provider.api_key, 'API Key')
@@ -1101,7 +1101,7 @@ function providerRequirementMessages(provider: RegisterProvider) {
       break
     case 'outlook_token': {
       const savedCount = Number(provider.mailboxes_count || 0)
-      if (savedCount <= 0 && pendingOutlookCount(provider) <= 0) missing.push('Microsoft 邮箱凭据池')
+      if (savedCount <= 0 && pendingOutlookCount(provider) <= 0) missing.push('Pool credențiale Microsoft')
       break
     }
     default:
@@ -1165,24 +1165,24 @@ function apiBasePlaceholder(provider: RegisterProvider) {
 
 function domainLabel(provider: RegisterProvider) {
   const type = providerType(provider)
-  if (type === 'inbucket') return '基础域名'
-  if (type === 'cloudmail_gen') return '邮箱域名'
-  return '域名'
+  if (type === 'inbucket') return 'Domeniu de bază'
+  if (type === 'cloudmail_gen') return 'Domeniu email'
+  return 'Domeniu'
 }
 
 function domainPlaceholder(provider: RegisterProvider) {
   const type = providerType(provider)
-  if (type === 'inbucket') return '每行一个基础域名，可配合随机子域名'
-  if (type === 'cloudmail_gen') return '每行一个邮箱域名'
-  if (type === 'cloudflare_temp_email') return '每行一个域名'
-  if (type === 'moemail') return '每行一个域名'
-  if (type === 'tempmail_lol') return '每行一个域名，可留空使用服务默认'
-  if (type === 'yyds_mail') return '每行一个域名，可留空'
-  return '每行一个域名'
+  if (type === 'inbucket') return 'Câte un domeniu de bază pe linie, cu subdomeniu aleatoriu'
+  if (type === 'cloudmail_gen') return 'Câte un domeniu email pe linie'
+  if (type === 'cloudflare_temp_email') return 'Câte un domeniu pe linie'
+  if (type === 'moemail') return 'Câte un domeniu pe linie'
+  if (type === 'tempmail_lol') return 'Câte un domeniu pe linie, gol = implicit serviciu'
+  if (type === 'yyds_mail') return 'Câte un domeniu pe linie, opțional'
+  return 'Câte un domeniu pe linie'
 }
 
 function gptMailKeyModeLabel(provider: RegisterProvider) {
-  return providerUsesPublicGptMailKey(provider) ? '公共' : '自定义'
+  return providerUsesPublicGptMailKey(provider) ? 'Public' : 'Personalizat'
 }
 
 function outlookPoolStats(provider: RegisterProvider) {
@@ -1242,23 +1242,23 @@ function outlookAliasSummary(provider: RegisterProvider) {
 
 function outlookAliasHint(provider: RegisterProvider) {
   const summary = outlookAliasSummary(provider)
-  if (!summary.enabled) return '未启用加号别名，注册时直接使用导入邮箱。'
+  if (!summary.enabled) return 'Alias plus dezactivat, se folosește emailul importat direct.'
   if (summary.pending > 0) {
-    return `保存后本次导入约展开为 ${summary.pendingExpanded} 个注册地址；登录和收信仍使用原邮箱凭据。`
+    return `După salvare, importul se extinde la ~${summary.pendingExpanded} adrese; autentificarea folosește credențialele originale.`
   }
   if (summary.base > 0) {
-    return `已保存 ${summary.base} 个原邮箱，当前规则生成 ${summary.alias} 个别名地址；登录和收信仍使用原邮箱凭据。`
+    return `Salvate ${summary.base} emailuri originale, generate ${summary.alias} aliasuri; autentificarea folosește credențialele originale.`
   }
-  return '保存后会为 Outlook / Hotmail 地址生成加号别名；登录和收信仍使用原邮箱凭据。'
+  return 'După salvare se generează aliasuri plus pentru Outlook/Hotmail; autentificarea folosește credențialele originale.'
 }
 
 function outlookPoolHint(provider: RegisterProvider) {
   const summary = outlookPoolSummary(provider)
-  if (summary.pending > 0) return `有 ${summary.pending} 个待保存，保存配置后进入 Microsoft 邮箱池。`
-  if (summary.saved <= 0) return '还没有保存 Microsoft 邮箱材料。'
-  if (summary.available <= 0 && summary.abnormal <= 0) return '库存已用完，请导入新的 Microsoft 邮箱材料。'
-  if (summary.abnormal > 0) return `有 ${summary.abnormal} 个异常状态，可在更多维护里释放或重试。`
-  return `已保存 ${summary.saved} 个 Microsoft 邮箱材料。`
+  if (summary.pending > 0) return `${summary.pending} de salvat, intră în pool după salvare.`
+  if (summary.saved <= 0) return 'Niciun material Microsoft salvat încă.'
+  if (summary.available <= 0 && summary.abnormal <= 0) return 'Stoc epuizat, importă materiale noi.'
+  if (summary.abnormal > 0) return `${summary.abnormal} cu anomalii, eliberează sau reîncearcă din meniu.`
+  return `Salvate ${summary.saved} materiale Microsoft.`
 }
 
 function gptMailState(index: number): GptMailStatusState {
@@ -1376,27 +1376,27 @@ function gptMailStatusTone(index: number) {
 
 function gptMailStatusTitle(index: number, provider: RegisterProvider) {
   const state = gptMailState(index)
-  if (state.loading) return '检测中'
-  if (state.error) return '检测失败'
-  if (!state.data) return providerUsesPublicGptMailKey(provider) ? '公共 Key' : '未检测'
-  return state.data.is_active === false ? '不可用' : '可用'
+  if (state.loading) return 'Se verifică'
+  if (state.error) return 'Verificare eșuată'
+  if (!state.data) return providerUsesPublicGptMailKey(provider) ? 'Key public' : 'Neverificat'
+  return state.data.is_active === false ? 'Indisponibil' : 'Disponibil'
 }
 
 function formatGptMailNumber(value: unknown) {
   const number = Number(value)
   if (!Number.isFinite(number)) return ''
-  if (number < 0) return '不限'
+  if (number < 0) return 'Nelimitat'
   return new Intl.NumberFormat().format(number)
 }
 
 function formatGptMailDuration(seconds: unknown) {
   const total = Number(seconds)
   if (!Number.isFinite(total) || total <= 0) return ''
-  if (total < 60) return `${Math.ceil(total)}s 后重置`
+  if (total < 60) return `Resetare în ${Math.ceil(total)}s`
   const hours = Math.floor(total / 3600)
   const minutes = Math.floor((total % 3600) / 60)
-  if (hours > 0) return `${hours}h ${minutes}m 后重置`
-  return `${Math.max(1, minutes)}m 后重置`
+  if (hours > 0) return `Resetare în ${hours}h ${minutes}m`
+  return `Resetare în ${Math.max(1, minutes)}m`
 }
 
 function gptMailRemainingText(index: number) {
@@ -1418,8 +1418,8 @@ function gptMailResetText(index: number) {
   const seconds = gptMailSecondsUntilReset(status)
   const countdown = formatGptMailDuration(seconds)
   if (countdown) return countdown
-  if (seconds !== null && seconds <= 0) return '等待刷新'
-  if (status.reset_at) return `${formatClock(status.reset_at)} 重置`
+  if (seconds !== null && seconds <= 0) return 'Așteaptă reîmprospătare'
+  if (status.reset_at) return `Resetare ${formatClock(status.reset_at)}`
   return ''
 }
 
@@ -1427,32 +1427,32 @@ function gptMailStatusHint(index: number, provider: RegisterProvider) {
   const state = gptMailState(index)
   if (state.error) return state.error
   if (provider.local_compose && !String(provider.default_domain || '').trim()) {
-    return '本地拼接模式需要填写默认域名。'
+    return 'Modul concatenare locală necesită domeniu implicit.'
   }
   if (provider.local_compose) {
-    return '本地拼接会少调用一次生成邮箱接口；请确认默认域名当前可用。'
+    return 'Concatenarea locală economisește un apel API; verifică domeniul.'
   }
   if (!state.data) {
     return providerUsesPublicGptMailKey(provider)
-      ? '使用 GPTMail 公共测试 Key，启动注册时后端会自动获取并缓存。'
-      : '填写自定义 Key 后可检测总额度和剩余额度。'
+      ? 'Key public GPTMail: backend-ul îl preia automat la pornire.'
+      : 'Completează Key personalizat pentru a verifica cota.'
   }
   if (String(state.data.key_mode || provider.key_mode || '') === 'custom') {
     const totalUsed = formatGptMailNumber(state.data.total_usage)
     const totalLimit = formatGptMailNumber(state.data.total_limit)
     const totalRemaining = formatGptMailNumber(state.data.remaining_total)
-    const checkedText = state.data.checked_at ? `检测于 ${formatClock(state.data.checked_at)}` : '状态已更新'
-    const resetText = state.data.reset_at ? `重置时间 ${formatClock(state.data.reset_at)}` : '自定义 Key 未返回独立重置时间'
+    const checkedText = state.data.checked_at ? `Verificat la ${formatClock(state.data.checked_at)}` : 'Stare actualizată'
+    const resetText = state.data.reset_at ? `Resetare ${formatClock(state.data.reset_at)}` : 'Key personalizat nu a returnat timp resetare'
     if (totalUsed && totalLimit) {
-      return `总计已用 ${totalUsed} / ${totalLimit}${totalRemaining ? `，剩余 ${totalRemaining}` : ''}，${checkedText}；${resetText}。`
+      return `Total folosit ${totalUsed} / ${totalLimit}${totalRemaining ? `, rămas ${totalRemaining}` : ''}, ${checkedText}; ${resetText}.`
     }
-    if (totalRemaining) return `总剩余 ${totalRemaining}，${checkedText}；${resetText}。`
-    return `${checkedText}；${resetText}。`
+    if (totalRemaining) return `Total rămas ${totalRemaining}, ${checkedText}; ${resetText}.`
+    return `${checkedText}; ${resetText}.`
   }
   const used = formatGptMailNumber(state.data.used_today)
   const limit = formatGptMailNumber(state.data.daily_limit)
-  if (used && limit) return `今日已用 ${used} / ${limit}，${state.data.checked_at ? `检测于 ${formatClock(state.data.checked_at)}` : '状态已更新'}。`
-  return state.data.checked_at ? `状态已更新，检测于 ${formatClock(state.data.checked_at)}。` : '状态已更新。'
+  if (used && limit) return `Folosit azi ${used} / ${limit}, ${state.data.checked_at ? `verificat la ${formatClock(state.data.checked_at)}` : 'stare actualizată'}.`
+  return state.data.checked_at ? `Stare actualizată, verificat la ${formatClock(state.data.checked_at)}.` : 'Stare actualizată.'
 }
 
 async function checkGptMailStatus(index: number, provider: RegisterProvider, options: GptMailCheckOptions = {}) {
@@ -1462,9 +1462,9 @@ async function checkGptMailStatus(index: number, provider: RegisterProvider, opt
     const response = await registerApi.getGptMailStatus(sanitizeProvider(provider), options.force ?? true)
     setGptMailState(index, { loading: false, error: '', data: response.status })
     if (options.reschedule !== false) scheduleGptMailRefresh(index, response.status)
-    if (!options.silent) toast.success('GPTMail 额度已更新')
+    if (!options.silent) toast.success('Cota GPTMail actualizată')
   } catch (error: any) {
-    const message = error?.message || '检测 GPTMail 额度失败'
+    const message = error?.message || 'Verificare cotă GPTMail eșuată'
     setGptMailState(index, { loading: false, error: message, data: previous })
     if (!options.silent) toast.error(message)
   }
@@ -1477,175 +1477,56 @@ async function refreshGptMailPublicKey(index: number, provider: RegisterProvider
     setGptMailState(index, { loading: false, error: '', data: response.status })
     if (options.reschedule !== false) scheduleGptMailRefresh(index, response.status)
   } catch (error: any) {
-    const message = error?.message || '刷新 GPTMail 公共 Key 失败'
-    setGptMailState(index, { loading: false, error: message, data: previous })
+    setGptMailState(index, { loading: false, error: error?.message || 'Reîmprospătare key eșuată', data: previous })
   }
-}
-
-function handleOutlookPoolAction(key: string) {
-  if (key === 'retry_failed') {
-    void retryFailedOutlookPool()
-    return
-  }
-  if (key === 'failed' || key === 'unused' || key === 'all') {
-    void resetOutlookPool(key)
-  }
-}
-
-function addProvider() {
-  if (!registerConfig.value) return
-  registerConfig.value.mail.providers = [...registerProviders.value, defaultProvider()]
-}
-
-async function deleteProvider(index: number) {
-  if (!registerConfig.value || registerProviders.value.length <= 1) return
-  const ok = await confirmDialog.ask({
-    title: '删除邮箱来源',
-    message: `确认删除邮箱来源 ${index + 1} 吗？`,
-    confirmText: '删除',
-  })
-  if (!ok) return
-  clearAllGptMailRefreshTimers()
-  gptMailStatusStates.value = {}
-  registerConfig.value.mail.providers = registerProviders.value.filter((_, itemIndex) => itemIndex !== index)
-}
-
-function arrayText(value: unknown) {
-  if (Array.isArray(value)) return value.map(String).join('\n')
-  return String(value || '')
-}
-
-function stringValue(value: unknown) {
-  if (Array.isArray(value)) return value.join('\n')
-  return String(value || '')
-}
-
-function applyRegisterConfig(config: LegacyRegisterConfig) {
-  registerConfig.value = normalizeRegisterConfig(config)
-  syncRegisterProxyControlsFromValue(registerConfig.value.proxy)
-  pruneGptMailStates()
-}
-
-function syncRegisterProxyControlsFromValue(value: unknown) {
-  const reference = parseProxyReference(value)
-  customRegisterProxyInput.value = ''
-  selectedRegisterProxyGroupId.value = ''
-  if (reference.mode === 'group') {
-    registerProxyMode.value = 'group'
-    selectedRegisterProxyGroupId.value = reference.value
-    return
-  }
-  if (reference.mode === 'direct') {
-    registerProxyMode.value = 'direct'
-    return
-  }
-  if (reference.mode === 'custom' || reference.mode === 'profile') {
-    registerProxyMode.value = 'custom'
-    customRegisterProxyInput.value = reference.mode === 'profile' ? String(value || '').trim() : reference.value
-    return
-  }
-  registerProxyMode.value = 'global'
-}
-
-function setRegisterProxyMode(mode: string) {
-  const nextMode = ['global', 'direct', 'group', 'custom'].includes(mode)
-    ? mode as RegisterProxyMode
-    : 'global'
-  registerProxyMode.value = nextMode
-  if (!registerConfig.value) return
-  if (nextMode === 'global') {
-    registerConfig.value.proxy = serializeProxyReference('global')
-  } else if (nextMode === 'direct') {
-    registerConfig.value.proxy = serializeProxyReference('direct')
-  } else if (nextMode === 'group') {
-    registerConfig.value.proxy = serializeProxyReference('group', selectedRegisterProxyGroupId.value)
-  } else {
-    registerConfig.value.proxy = serializeProxyReference('custom', customRegisterProxyInput.value)
-  }
-}
-
-function selectRegisterProxyGroup(groupId: string) {
-  selectedRegisterProxyGroupId.value = String(groupId || '').trim()
-  registerProxyMode.value = 'group'
-  if (registerConfig.value) {
-    registerConfig.value.proxy = serializeProxyReference('group', selectedRegisterProxyGroupId.value)
-  }
-}
-
-function setCustomRegisterProxyInput(value: string) {
-  customRegisterProxyInput.value = String(value || '').trim()
-  registerProxyMode.value = 'custom'
-  if (registerConfig.value) {
-    registerConfig.value.proxy = serializeProxyReference('custom', customRegisterProxyInput.value)
-  }
-}
-
-function updateProviderArray(index: number, key: 'domain' | 'subdomain', event: Event) {
-  const provider = registerProviders.value[index]
-  if (!provider) return
-  const value = (event.target as HTMLTextAreaElement).value
-  provider[key] = value.split(/[\n,]/).map(item => item.trim()).filter(Boolean)
 }
 
 function sanitizeProvider(provider: RegisterProvider): RegisterProvider {
-  const type = providerType(provider)
-  const output: RegisterProvider = providerHasKnownType(type) ? {} : { ...provider }
-
-  if (providerHasKnownType(type)) {
-    for (const key of providerKeysForType(type)) {
-      if (provider[key] !== undefined) {
-        output[key] = providerDraftValue(type, key, provider[key])
-      }
-    }
-  }
-
-  delete output.mailboxes_count
-  delete output.mailboxes_base_count
-  delete output.mailboxes_alias_count
-  delete output.mailboxes_preview
-  delete output.mailboxes_stats
-  delete output.mailboxes_parse_stats
-  delete output.provider_ref
-  return output
+  const copy = { ...provider }
+  delete (copy as any).mailboxes_count
+  delete (copy as any).mailboxes_base_count
+  delete (copy as any).mailboxes_alias_count
+  delete (copy as any).mailboxes_preview
+  delete (copy as any).mailboxes_stats
+  delete (copy as any).mailboxes_parse_stats
+  return copy
 }
 
-function legacyPayload(): Partial<LegacyRegisterConfig> {
-  if (!registerConfig.value) return {}
-  return {
-    mail: {
-      ...registerConfig.value.mail,
-      providers: registerProviders.value.map(sanitizeProvider),
-    },
-    proxy: String(registerConfig.value.proxy || '').trim(),
-    total: Math.max(1, Number(registerConfig.value.total) || 1),
-    threads: Math.max(1, Number(registerConfig.value.threads) || 1),
-    mode: (registerConfig.value.mode || 'total') as RegisterMode,
-    target_quota: Math.max(1, Number(registerConfig.value.target_quota) || 1),
-    target_available: Math.max(1, Number(registerConfig.value.target_available) || 1),
-    check_interval: Math.max(1, Number(registerConfig.value.check_interval) || 5),
-  }
+function arrayText(arr: string[] | undefined): string {
+  return (arr || []).join('\n')
 }
 
-async function loadRegisterConfig(silent = false) {
-  if (!silent) legacyLoading.value = true
+function stringValue(value: unknown): string {
+  return String(value ?? '')
+}
+
+function formatClock(time: string | undefined): string {
+  if (!time) return '-'
   try {
-    const response = await registerApi.getConfig()
-    applyRegisterConfig(response.register)
-  } catch (error: any) {
-    if (!silent) toast.error(error?.message || '加载注册配置失败')
-  } finally {
-    if (!silent) legacyLoading.value = false
-  }
-}
-
-async function loadProxyGroups() {
-  try {
-    const response = await proxyApi.listGroups()
-    proxyGroups.value = Array.isArray(response.groups)
-      ? response.groups.filter((group) => String(group?.id || '').trim())
-      : []
+    const d = new Date(time)
+    return d.toLocaleTimeString('ro-RO', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
   } catch {
-    proxyGroups.value = []
+    return time
+  }
+}
+
+function normalizeLogLevel(level: string | undefined): string {
+  const l = (level || 'info').toLowerCase()
+  if (['error', 'err'].includes(l)) return 'error'
+  if (['warn', 'warning'].includes(l)) return 'warning'
+  if (['debug'].includes(l)) return 'debug'
+  return 'info'
+}
+
+async function loadLegacyConfig() {
+  legacyLoading.value = true
+  try {
+    const data = await registerApi.getLegacyConfig()
+    registerConfig.value = normalizeRegisterConfig(data)
+  } catch (error: any) {
+    toast.error(error?.message || 'Eroare la încărcarea configurației')
+  } finally {
+    legacyLoading.value = false
   }
 }
 
@@ -1653,11 +1534,10 @@ async function saveLegacyConfig() {
   if (!registerConfig.value) return
   legacySaving.value = true
   try {
-    const response = await registerApi.updateConfig(legacyPayload())
-    applyRegisterConfig(response.register)
-    toast.success('注册配置已保存')
+    await registerApi.saveLegacyConfig(registerConfig.value)
+    toast.success('Configurație salvată')
   } catch (error: any) {
-    toast.error(error?.message || '保存注册配置失败')
+    toast.error(error?.message || 'Eroare la salvare')
   } finally {
     legacySaving.value = false
   }
@@ -1665,143 +1545,127 @@ async function saveLegacyConfig() {
 
 async function toggleLegacyTask() {
   if (!registerConfig.value) return
-  const starting = !registerConfig.value.enabled
-  const ok = await confirmDialog.ask({
-    title: starting ? '启动注册任务' : '停止注册任务',
-    message: starting ? '启动前会先保存当前注册配置。确认启动吗？' : '确认请求停止当前注册任务吗？',
-    confirmText: starting ? '启动' : '停止',
-  })
-  if (!ok) return
-  legacySaving.value = true
+  const next = !registerConfig.value.enabled
   try {
-    if (starting) {
-      await registerApi.updateConfig(legacyPayload())
+    if (next) {
+      await registerApi.startLegacyTask()
+      toast.success('Sarcină pornită')
+    } else {
+      await registerApi.stopLegacyTask()
+      toast.success('Sarcină oprită')
     }
-    const response = starting ? await registerApi.startLegacy() : await registerApi.stopLegacy()
-    applyRegisterConfig(response.register)
-    toast.success(starting ? '注册任务已启动' : '已请求停止注册任务')
-    if (starting) startLiveUpdates()
+    await loadLegacyConfig()
   } catch (error: any) {
-    toast.error(error?.message || '切换注册任务失败')
-  } finally {
-    legacySaving.value = false
+    toast.error(error?.message || 'Eroare la comutare')
   }
 }
 
 async function resetLegacyStats() {
-  const ok = await confirmDialog.ask({
-    title: '重置注册统计',
-    message: '确认清空当前注册统计和实时日志吗？',
-    confirmText: '重置',
+  if (!registerConfig.value) return
+  const ok = await confirmDialog.confirm({
+    title: 'Resetează statistici',
+    message: 'Sigur resetezi toate statisticile de înregistrare?',
+    confirmText: 'Resetează',
+    cancelText: 'Anulează',
+    tone: 'danger',
   })
   if (!ok) return
-  legacySaving.value = true
   try {
-    const response = await registerApi.resetLegacy()
-    applyRegisterConfig(response.register)
-    toast.success('注册统计已重置')
+    await registerApi.resetLegacyStats()
+    toast.success('Statistici resetate')
+    await loadLegacyConfig()
   } catch (error: any) {
-    toast.error(error?.message || '重置注册统计失败')
-  } finally {
-    legacySaving.value = false
+    toast.error(error?.message || 'Eroare la resetare')
   }
 }
 
-async function resetOutlookPool(scope: OutlookResetScope) {
-  const copy: Record<OutlookResetScope, { title: string; message: string; confirmText: string }> = {
-    failed: {
-      title: '释放异常状态',
-      message: '清除 failed、token_invalid、login_required 和 in_use 状态，已成功使用的邮箱不会释放。',
-      confirmText: '释放',
-    },
-    unused: {
-      title: '清空未使用邮箱',
-      message: '从已保存 Outlook 邮箱池中移除还没有状态记录的邮箱凭据。',
-      confirmText: '清空',
-    },
-    all: {
-      title: '重置全部邮箱状态',
-      message: '清空 Outlook 邮箱池状态记录，所有已保存邮箱会重新变成可领取状态。',
-      confirmText: '重置',
-    },
-  }
-  const ok = await confirmDialog.ask(copy[scope])
-  if (!ok) return
-  legacySaving.value = true
-  try {
-    const response = await registerApi.resetOutlookPool(scope)
-    applyRegisterConfig(response.register)
-    toast.success('邮箱池状态已更新')
-  } catch (error: any) {
-    toast.error(error?.message || '更新邮箱池状态失败')
-  } finally {
-    legacySaving.value = false
-  }
+function addProvider() {
+  if (!registerConfig.value) return
+  const providers = [...registerProviders.value]
+  providers.push(defaultProvider())
+  registerConfig.value.mail.providers = providers
 }
 
-async function retryFailedOutlookPool() {
-  const ok = await confirmDialog.ask({
-    title: '重试异常邮箱',
-    message: '会先释放 failed、token_invalid、login_required 和 in_use 状态，然后按当前注册任务配置启动，已成功使用的邮箱不会释放。',
-    confirmText: '重试',
-  })
-  if (!ok) return
-  legacySaving.value = true
-  try {
-    const resetResponse = await registerApi.resetOutlookPool('failed')
-    applyRegisterConfig(resetResponse.register)
-    const startResponse = await registerApi.startLegacy()
-    applyRegisterConfig(startResponse.register)
-    toast.success('已释放异常邮箱并启动注册任务')
-  } catch (error: any) {
-    toast.error(error?.message || '重试异常邮箱失败')
-  } finally {
-    legacySaving.value = false
-  }
+function deleteProvider(index: number) {
+  if (!registerConfig.value) return
+  const providers = [...registerProviders.value]
+  providers.splice(index, 1)
+  if (!providers.length) providers.push(defaultProvider())
+  registerConfig.value.mail.providers = providers
+  clearGptMailState(index)
 }
 
-function startLiveUpdates() {
-  stopLiveUpdates()
-  const token = getAuthToken()
-  if (!token) {
-    startPolling()
-    return
-  }
-  try {
-    const baseUrl = String(import.meta.env.VITE_API_URL || '').replace(/\/$/, '')
-    const source = new EventSource(`${baseUrl}/api/register/events?token=${encodeURIComponent(token)}`)
-    source.onmessage = (event) => {
-      try {
-        applyRegisterConfig(JSON.parse(event.data) as LegacyRegisterConfig)
-      } catch {
-        // ignore malformed event payload
-      }
+function updateProviderArray(index: number, key: string, event: Event) {
+  const provider = registerProviders.value[index]
+  if (!provider) return
+  const text = (event.target as HTMLTextAreaElement).value
+  provider[key] = text.split('\n').map(s => s.trim()).filter(Boolean)
+}
+
+function setRegisterProxyMode(mode: RegisterProxyMode) {
+  registerProxyMode.value = mode
+  if (mode === 'group') {
+    if (!selectedRegisterProxyGroupId.value && proxyGroups.value.length) {
+      selectedRegisterProxyGroupId.value = proxyGroups.value[0].id
     }
-    source.onerror = () => {
-      stopLiveUpdates()
-      startPolling()
+  } else if (mode === 'custom') {
+    if (!customRegisterProxyInput.value) {
+      customRegisterProxyInput.value = registerConfig.value?.proxy || ''
     }
-    eventSource.value = source
+  }
+}
+
+function selectRegisterProxyGroup(groupId: string) {
+  selectedRegisterProxyGroupId.value = groupId
+}
+
+function setCustomRegisterProxyInput(value: string) {
+  customRegisterProxyInput.value = value
+}
+
+async function loadProxyGroups() {
+  try {
+    const data = await proxyApi.getProxyGroups()
+    proxyGroups.value = data.groups || []
   } catch {
-    startPolling()
+    proxyGroups.value = []
   }
 }
 
-function stopLiveUpdates() {
-  if (eventSource.value) {
-    eventSource.value.close()
-    eventSource.value = null
+function handleOutlookPoolAction(item: ActionMenuItem) {
+  const scope = item.key as OutlookResetScope
+  handleOutlookPoolReset(scope)
+}
+
+async function handleOutlookPoolReset(scope: OutlookResetScope) {
+  if (!registerConfig.value) return
+  const labels: Record<string, string> = {
+    all: 'toate',
+    failed: 'anormale',
+    unused: 'nefolosite',
+  }
+  const ok = await confirmDialog.confirm({
+    title: `Resetează emailuri ${labels[scope] || ''}`,
+    message: `Sigur resetezi emailurile ${labels[scope] || ''} din pool?`,
+    confirmText: 'Resetează',
+    cancelText: 'Anulează',
+    tone: 'danger',
+  })
+  if (!ok) return
+  try {
+    await registerApi.resetOutlookPool(scope)
+    toast.success('Pool resetat')
+    await loadLegacyConfig()
+  } catch (error: any) {
+    toast.error(error?.message || 'Eroare la resetare pool')
   }
 }
 
 function startPolling() {
   stopPolling()
-  pollTimer.value = window.setInterval(async () => {
-    await loadRegisterConfig(true)
-    if (!registerConfig.value?.enabled) {
-      stopPolling()
-    }
-  }, 2000)
+  pollTimer.value = window.setInterval(() => {
+    loadLegacyConfig()
+  }, 5000)
 }
 
 function stopPolling() {
@@ -1811,351 +1675,287 @@ function stopPolling() {
   }
 }
 
-function startGptMailClock() {
-  stopGptMailClock()
-  gptMailClockNow.value = Date.now()
-  gptMailClockTimer.value = window.setInterval(() => {
-    gptMailClockNow.value = Date.now()
-  }, 10_000)
-}
-
-function stopGptMailClock() {
-  if (gptMailClockTimer.value) {
-    window.clearInterval(gptMailClockTimer.value)
-    gptMailClockTimer.value = null
+function startSSE() {
+  stopSSE()
+  const token = getAuthToken()
+  const url = `${registerApi.baseURL}/legacy/sse${token ? `?token=${encodeURIComponent(token)}` : ''}`
+  eventSource.value = new EventSource(url)
+  eventSource.value.onmessage = (e) => {
+    try {
+      const data = JSON.parse(e.data)
+      if (data.type === 'log' && registerConfig.value) {
+        registerConfig.value.logs = [...(registerConfig.value.logs || []), data]
+        if (registerConfig.value.logs.length > 200) {
+          registerConfig.value.logs = registerConfig.value.logs.slice(-200)
+        }
+      }
+      if (data.type === 'stats' && registerConfig.value) {
+        registerConfig.value.stats = { ...registerConfig.value.stats, ...data }
+      }
+    } catch {
+      // ignore
+    }
+  }
+  eventSource.value.onerror = () => {
+    stopSSE()
+    setTimeout(startSSE, 5000)
   }
 }
 
-function formatClock(value?: string | null) {
-  if (!value) return ''
-  const date = new Date(value)
-  if (Number.isNaN(date.getTime())) return value
-  return date.toLocaleTimeString()
+function stopSSE() {
+  if (eventSource.value) {
+    eventSource.value.close()
+    eventSource.value = null
+  }
 }
 
-function normalizeLogLevel(level?: string) {
-  if (level === 'red' || level === 'error') return 'error'
-  if (level === 'green' || level === 'success') return 'success'
-  if (level === 'yellow' || level === 'warning') return 'warning'
-  return 'info'
-}
-
-onMounted(async () => {
-  startGptMailClock()
-  await Promise.all([loadRegisterConfig(), loadProxyGroups()])
-  startLiveUpdates()
+onMounted(() => {
+  loadLegacyConfig()
+  loadProxyGroups()
+  startPolling()
+  startSSE()
 })
 
 onBeforeUnmount(() => {
-  stopLiveUpdates()
   stopPolling()
-  stopGptMailClock()
+  stopSSE()
   clearAllGptMailRefreshTimers()
 })
 </script>
 
 <style scoped>
-.register-layout {
-  display: grid;
-  gap: 18px;
+.register-page {
+  padding: 1rem;
 }
 
-@media (min-width: 1280px) {
+.register-layout {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
   .register-layout {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    align-items: start;
+    grid-template-columns: 1fr;
   }
 }
 
-.register-config-column,
-.register-runtime-column {
-  min-width: 0;
-}
-
 .register-config-column {
-  display: grid;
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .register-runtime-column {
-  display: grid;
-  gap: 16px;
-  position: sticky;
-  top: 16px;
-}
-
-.register-runtime-section {
-  display: grid;
-  gap: 12px;
-}
-
-.register-runtime-log {
-  min-width: 0;
-}
-
-.register-runtime-tips {
-  display: grid;
-  gap: 4px;
-  color: hsl(var(--muted-foreground));
-  line-height: 1.6;
-}
-
-.register-runtime-tips p {
-  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .register-form-grid {
   display: grid;
-  gap: 12px;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
 }
 
-@media (min-width: 720px) {
-  .register-form-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.register-form-grid--mail {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 
-  .register-field--full {
-    grid-column: 1 / -1;
-  }
-
-  .register-form-grid--two {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .register-form-grid--mail {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+.register-form-grid--two {
+  grid-template-columns: 1fr 1fr;
 }
 
 .register-form-grid--three {
-  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  grid-template-columns: 1fr 1fr 1fr;
 }
 
 .register-field {
-  display: grid;
-  min-width: 0;
-  gap: 7px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.register-field--full {
+  grid-column: 1 / -1;
 }
 
 .register-label {
-  font-size: 12px;
-  color: hsl(var(--muted-foreground));
-}
-
-.register-proxy-hint {
-  margin: 0;
-  font-size: 12px;
-  line-height: 1.6;
-  color: hsl(var(--muted-foreground));
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
 }
 
 .register-checkbox-field {
   display: flex;
-  min-height: 62px;
-  align-items: end;
-  padding-bottom: 8px;
+  align-items: center;
+  padding-top: 0.5rem;
 }
 
 .register-checkbox-field--compact {
-  min-height: 0;
-  align-items: center;
-  padding-bottom: 0;
+  padding-top: 0;
+}
+
+.register-proxy-hint {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  margin-top: 0.25rem;
 }
 
 .register-provider-list {
-  display: grid;
-  gap: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
 .register-provider-card {
-  display: grid;
-  gap: 14px;
+  border-radius: 0.75rem;
 }
 
 .register-provider-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  gap: 0.75rem;
 }
 
 .register-provider-title {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  font-size: 14px;
-  font-weight: 650;
-  color: hsl(var(--foreground));
-}
-
-.register-provider-message {
-  margin-top: -2px;
-}
-
-.register-provider-section {
-  display: grid;
-  gap: 10px;
-}
-
-.register-provider-section--soft {
-  border: 1px solid hsl(var(--border) / 0.82);
-  border-radius: 12px;
-  background: hsl(var(--muted) / 0.16);
-  padding: 12px;
-}
-
-.register-provider-section-title {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: hsl(var(--muted-foreground));
-  font-size: 11px;
-  line-height: 1.25;
-}
-
-.register-provider-section-title::after {
-  content: "";
-  height: 1px;
-  min-width: 24px;
-  flex: 1;
-  background: hsl(var(--border) / 0.72);
-}
-
-.register-provider-stack {
-  display: grid;
-  gap: 12px;
-}
-
-.register-preview-line {
-  margin-top: 4px;
-  font-size: 12px;
-  line-height: 1.45;
-  color: hsl(var(--muted-foreground));
-}
-
-.register-outlook-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-.register-gptmail-panel {
-  display: grid;
-  gap: 8px;
-}
-
-.register-gptmail-summary {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
+  gap: 0.5rem;
+  font-weight: 500;
+  font-size: 0.875rem;
 }
 
 .register-provider-actions {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
+  gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .register-provider-actions--left {
   justify-content: flex-start;
 }
 
+.register-provider-message {
+  margin-top: 0.5rem;
+}
+
+.register-provider-section {
+  margin-top: 0.75rem;
+}
+
+.register-provider-section--soft {
+  background: var(--color-background);
+  border-radius: 0.5rem;
+  padding: 0.75rem;
+  margin-left: -0.25rem;
+  margin-right: -0.25rem;
+}
+
+.register-provider-section-title {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.register-provider-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-gptmail-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.register-gptmail-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
 .register-textarea {
-  min-height: 80px;
   width: 100%;
+  min-height: 5rem;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid var(--color-border);
+  background: var(--color-background);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
   resize: vertical;
-  border: 1px solid hsl(var(--border));
-  border-radius: 12px;
-  background: hsl(var(--card));
-  padding: 10px 12px;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-  font-size: 12px;
-  line-height: 1.55;
-  color: hsl(var(--foreground));
-  outline: none;
 }
 
 .register-textarea--tall {
-  min-height: 124px;
+  min-height: 8rem;
 }
 
-.register-textarea:focus {
-  border-color: hsl(var(--ring));
-  box-shadow: 0 0 0 2px hsl(var(--ring) / 0.14);
+.register-preview-line {
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  margin-top: 0.25rem;
 }
 
-.register-textarea:disabled {
-  cursor: not-allowed;
-  opacity: 0.65;
+.register-outlook-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
 }
 
 .register-outlook-summary {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  gap: 6px;
+  gap: 0.375rem;
 }
 
 .register-outlook-details {
-  border-top: 1px solid hsl(var(--border) / 0.68);
-  padding-top: 8px;
+  margin-top: 0.5rem;
 }
 
 .register-outlook-details summary {
   cursor: pointer;
-  width: fit-content;
-  color: hsl(var(--muted-foreground));
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.register-outlook-details summary:hover {
-  color: hsl(var(--foreground));
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--color-muted-foreground);
 }
 
 .register-outlook-detail-chips {
   display: flex;
   flex-wrap: wrap;
-  gap: 6px;
-  padding-top: 8px;
+  gap: 0.375rem;
+  margin-top: 0.5rem;
+}
+
+.register-runtime-section {
+  position: sticky;
+  top: 1rem;
 }
 
 .register-runtime-actions {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 8px;
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
-@media (max-width: 1279px) {
-  .register-runtime-column {
-    position: static;
-  }
+.register-runtime-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
 }
 
-@media (max-width: 640px) {
-  .register-provider-head {
-    display: grid;
-    align-items: start;
-  }
+.register-runtime-tips p {
+  font-size: 0.75rem;
+  line-height: 1.4;
+}
 
-  .register-provider-actions,
-  .register-outlook-toolbar,
-  .register-runtime-actions {
-    grid-template-columns: 1fr;
-    justify-content: flex-start;
-  }
-
-  .register-outlook-toolbar {
-    display: grid;
-  }
-
-  .register-runtime-actions {
-    display: grid;
-  }
+.register-runtime-log {
+  margin-top: 0.5rem;
 }
 </style>

@@ -1,4 +1,4 @@
-﻿import { defineStore } from 'pinia'
+import { defineStore } from 'pinia'
 import { ref } from 'vue'
 import { prepareSettingsForEdit, settingsApi } from '@/api'
 import type { RawSettings } from '@/api/settings'

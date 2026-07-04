@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <div class="min-h-screen overflow-x-hidden bg-card/70 text-foreground backdrop-blur">
     <div class="mx-auto w-full max-w-6xl min-w-0 px-4 py-8">
       <PagePanel>

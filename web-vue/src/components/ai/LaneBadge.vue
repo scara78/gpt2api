@@ -1,4 +1,4 @@
-﻿<template>
+<template>
   <StatusPill
     :label="laneSummaryText(lanes)"
     :tone-class="laneSummaryClass(lanes)"

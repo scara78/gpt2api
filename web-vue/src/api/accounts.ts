@@ -1,4 +1,4 @@
-﻿import apiClient from './client'
+import apiClient from './client'
 import type { ProxyGroup } from './proxy'
 
 export type AccountLane = 'fast' | 'thinking' | 'pro'

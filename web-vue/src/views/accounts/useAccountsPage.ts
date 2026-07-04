@@ -1,4 +1,4 @@
-﻿import { computed, onActivated, onMounted, reactive, ref, watch } from 'vue'
+import { computed, onActivated, onMounted, reactive, ref, watch } from 'vue'
 import { accountImportsApi, accountsApi, proxyApi } from '@/api'
 import { normalizeAccountBackendStatus } from '@/api/accounts'
 import { parseProxyReference, serializeProxyReference } from '@/api/proxy'
